@@ -14,8 +14,9 @@ app.listen(3000, () => {
 
 const { Client, GatewayIntentBits } = require('discord.js');
 
-// 転送先チャンネルのIDを指定（ここに実際のチャンネルIDを入れてください）
 const targetChannelId = '1483447787465998336';
+const sourceChannelId = '1482754507837407282';
+const botUserId = '1483451840040534207'
 
 // Botのクライアントを作成
 const client = new Client({
@@ -34,15 +35,14 @@ client.once('ready', () => {
 // メッセージを受け取った時の処理
 client.on('messageCreate', message => {
     // Bot自身の発言は無視する
-    if (message.author.bot) return;
-
-    // 「こんにちは」と来たら「こんにちは！」と返す
-    if (message.content === "こんにちは") {
-        message.channel.send('こんにちは！');
-    }
-
-    // 「速報」が含まれていたら別チャンネルに転送
-    if (message.content.includes("速報")) {
+    console.log(message)
+    if (message.author.id === botUserId) return;
+    if (message.channelId !== sourceChannelId) return;
+    // 指定した速報メッセージが含まれていたら別チャンネルに転送
+    if (
+        message.content.includes("GALAXYウスイのメガなな速報") ||
+        message.content.includes("ファンキーサトウのメガいち速報")
+    ) {
         const targetChannel = client.channels.cache.get(targetChannelId);
         if (targetChannel) {
             targetChannel.send(`${message.content}`);
