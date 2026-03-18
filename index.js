@@ -23,6 +23,21 @@ const client = new Client({
     ]
 });
 
+// embed.descriptionに指定ワードが含まれていたらtrueを返す
+function isTargetEmbed(embed) {
+    const desc = embed?.description;
+    if (typeof desc !== 'string') return false;
+    return (
+        desc.includes("GALAXYウスイのメガなな速報") ||
+        desc.includes("ファンキーサトウのメガいち速報")
+    );
+}
+
+// message.embedsの中に1つでも一致があればtrueを返す
+function hasTargetEmbed(embeds) {
+    return Array.isArray(embeds) && embeds.some(isTargetEmbed);
+}
+
 // 起動時の処理
 client.once('ready', () => {
     console.log(`${client.user.tag} としてログインしました`);
@@ -32,15 +47,16 @@ client.once('ready', () => {
 client.on('messageCreate', message => {
     // Bot自身の発言は無視する
     if (message.author.id === process.env.BOT_USER_ID) return;
+    if (message.author.id !== process.env.SEND_BOT_USER_ID) return;
     if (message.channelId !== process.env.SOURCE_CHANNEL_ID) return;
+
     // 指定した速報メッセージが含まれていたら別チャンネルに転送
-    if (
-        message.content.includes("GALAXYウスイのメガなな速報") ||
-        message.content.includes("ファンキーサトウのメガいち速報")
-    ) {
+    if (hasTargetEmbed(message.embeds)) {
         const targetChannel = client.channels.cache.get(process.env.TARGET_CHANNEL_ID);
         if (targetChannel) {
-            targetChannel.send(`${message.content}`);
+            for (const embed of message.embeds) {
+                if (isTargetEmbed(embed)) targetChannel.send(`${embed.description}`);
+            }
         }
     }
 });
