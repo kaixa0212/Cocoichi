@@ -35,7 +35,6 @@ client.once('ready', () => {
 // メッセージを受け取った時の処理
 client.on('messageCreate', message => {
     // Bot自身の発言は無視する
-    console.log(message)
     if (message.author.id === botUserId) return;
     if (message.channelId !== sourceChannelId) return;
     // 指定した速報メッセージが含まれていたら別チャンネルに転送
