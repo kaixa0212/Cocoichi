@@ -55,7 +55,11 @@ client.on('messageCreate', message => {
         const targetChannel = client.channels.cache.get(process.env.TARGET_CHANNEL_ID);
         if (targetChannel) {
             for (const embed of message.embeds) {
-                if (isTargetEmbed(embed)) targetChannel.send(`${embed.description}`);
+                console.log("message: ", embed.description);
+                console.log("image: ", embed.image);
+                if (isTargetEmbed(embed)) {
+                    targetChannel.send(embed.description);
+                }
             }
         }
     }
