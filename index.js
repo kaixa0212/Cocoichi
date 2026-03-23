@@ -51,15 +51,13 @@ client.on('messageCreate', message => {
     if (message.channelId !== process.env.SOURCE_CHANNEL_ID) return;
 
     // 指定した速報メッセージが含まれていたら別チャンネルに転送
-    if (hasTargetEmbed(message.embeds)) {
-        const targetChannel = client.channels.cache.get(process.env.TARGET_CHANNEL_ID);
-        if (targetChannel) {
-            for (const embed of message.embeds) {
-                console.log("message: ", embed.description);
-                console.log("image: ", embed.image);
-                if (isTargetEmbed(embed)) {
-                    targetChannel.send(embed.description);
-                }
+    const targetChannel = client.channels.cache.get(process.env.TARGET_CHANNEL_ID);
+    if (targetChannel) {
+        for (const embed of message.embeds) {
+            console.log("message: ", embed.description);
+            console.log("image: ", embed.image);
+            if (isTargetEmbed(embed)) {
+                targetChannel.send(embed.description);
             }
         }
     }
